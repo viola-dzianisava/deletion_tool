@@ -23,16 +23,20 @@ def remove_file(path, trash_bin):
         destination = f"{destination}.{suffix}"
 
     os.rename(path, destination)
-
-    # update_db
-    if not os.path.exists(DB_PATH):
-        with open(DB_PATH, "w") as db_file:
-            json.dump({}, db_file)
-
-    with open(DB_PATH) as f_in:
-        data = json.load(f_in)
-
+    data = open_db()
     data[destination] = path
+    write_to_db(data)
+
+
+def open_db():
+    data = {}
+    if os.path.exists(DB_PATH):
+        with open(DB_PATH) as f_in:
+            data = json.load(f_in)
+    return data
+
+
+def write_to_db(data):
     with open(DB_PATH, "w") as f_out:
         json.dump(data, f_out, indent=4)
 
