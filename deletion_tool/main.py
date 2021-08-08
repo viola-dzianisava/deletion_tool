@@ -45,11 +45,20 @@ def write_to_db(data):
         json.dump(data, f_out, indent=4)
 
 
+def restore_file(filename, trash_bin):
+    key = os.path.join(trash_bin, filename)
+    data = open_db()
+    old_path = data.pop(key)
+    os.rename(key, old_path)
+    write_to_db(data)
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument(
         'filenames', type=str, nargs='+',
         help='files for deletion')
+    parser.add_argument('--restore', action='store_true')
     args = parser.parse_args()
     return args
 
@@ -57,8 +66,12 @@ def parse_args():
 def main():
     args = parse_args()
     make_trash_bin(TRASH_BIN)
-    for filename in args.filenames:
-        remove_file(filename, TRASH_BIN)
+    if args.restore:
+        for filename in args.filenames:
+            restore_file(filename, TRASH_BIN)
+    else:
+        for filename in args.filenames:
+            remove_file(filename, TRASH_BIN)
 
 
 if __name__ == "__main__":
