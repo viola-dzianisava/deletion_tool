@@ -4,7 +4,7 @@ import random
 import argparse
 
 
-TRASH_BIN = os.path.join("data", "trash_bin")
+TRASH_BIN = os.path.abspath(os.path.join("data", "trash_bin"))
 DB_PATH = os.path.join(TRASH_BIN, "db.json")
 
 
@@ -14,6 +14,9 @@ def make_trash_bin(path):
 
 def remove_file(path, trash_bin):
     path = os.path.abspath(path)
+
+    if path.startswith(trash_bin):
+        raise Exception("File is already in the trash bin")
 
     filename = os.path.basename(path)
     destination = os.path.join(trash_bin, filename)
