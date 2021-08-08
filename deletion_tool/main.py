@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import argparse
 
 
 TRASH_BIN = os.path.join("data", "trash_bin")
@@ -41,9 +42,20 @@ def write_to_db(data):
         json.dump(data, f_out, indent=4)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        'filenames', type=str, nargs='+',
+        help='files for deletion')
+    args = parser.parse_args()
+    return args
+
+
 def main():
+    args = parse_args()
     make_trash_bin(TRASH_BIN)
-    remove_file("1.txt", TRASH_BIN)
+    for filename in args.filenames:
+        remove_file(filename, TRASH_BIN)
 
 
 if __name__ == "__main__":
